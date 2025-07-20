@@ -10,7 +10,7 @@ public class Main {
         try (Scanner scanner = new Scanner(System.in)) {
             String templateFile = null;
 
-            // 2. Prompt user to select email template
+            // 1. Prompt user to select email template
             while (templateFile == null) {
                 System.out.println("Choose an email template to send:");
                 System.out.println("  1. newsletter.html");
@@ -20,7 +20,7 @@ public class Main {
 
                 if (scanner.hasNextInt()) {
                     int templateChoice = scanner.nextInt();
-                    scanner.nextLine(); // Consume newline
+                    scanner.nextLine();
 
                     switch (templateChoice) {
                         case 1 -> templateFile = "newsletter.html";
@@ -34,15 +34,15 @@ public class Main {
                 }
             }
 
-            // 3. Ask user for recipient email
+            // 2. Ask user for recipient email
             System.out.print("Enter recipient email: ");
             String toEmail = scanner.nextLine().trim();
 
-            // 4. Ask for email subject
+            // 3. Ask for email subject
             System.out.print("Enter email subject: ");
             String subject = scanner.nextLine().trim();
 
-            // 5. Send the email
+            // 4. Send the email
             sendEmail(templateFile, toEmail, subject);
 
         } catch (Exception e) {

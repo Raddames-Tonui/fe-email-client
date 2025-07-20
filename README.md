@@ -17,30 +17,25 @@ email-sender-java/
 │       │           ├── manual/                # Manual method using plain string
 │       │           │   ├── ManualEmailSender.java
 │       │           │   └── ManualMain.java
-│       │           ├── thymeleaf/             # Thymeleaf template engine
 │       │           │   ├── ThymeleafRenderer.java
 │       │           │   └── ThymeleafMain.java
-│       │           ├── freemarker/            # Freemarker template engine
-│       │           │   ├── FreemarkerRenderer.java
-│       │           │   └── FreemarkerMain.java
-│       │           └── util/
-│       │               └── EmailService.java  # Shared SMTP logic
-│       └── resources/
 │           └── email-templates/
 │               ├── welcome.html               # For manual
 │               ├── newsletter.html            # For manual
 │               ├── trial-expiry.html          # For manual
-│               ├── welcome-thymeleaf.html     # For Thymeleaf
-│               ├── newsletter-thymeleaf.html
-│               ├── trial-expiry-thymeleaf.html
-│               ├── welcome.ftl                # For Freemarker
-│               ├── newsletter.ftl
-│               └── trial-expiry.ftl
+├── .env
+
 ```
 
 ---
 
 ## 🧠 Concept Summary
+
+Add to .env
+```env
+SENDER_EMAIL=youremail@example.com
+SENDER_PASSWORD=yourpassword123
+```
 
 ### 1. Manual String Injection
 

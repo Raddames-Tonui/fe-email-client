@@ -9,52 +9,55 @@ import jakarta.mail.internet.*;
 import java.io.*;
 import java.util.Properties;
 
-
 import static emailsender.manual.TemplateLoader.loadTemplateContent;
 import static emailsender.manual.EnvLoader.get;
 
 /**
- * A utility class to manually send HTML emails using templates with inline (CID) images.
- * Template files are expected to be in the resources/templates directory.
+ * Utility class for sending HTML emails with embedded images using JavaMail API.
+ *
+ * The email templates are HTML files stored in the resources directory,
+ * and they may include placeholders like {{name}} and CID references to images.
  */
 public class ManualEmailSender {
 
+    /**
+     * Retrieve sender credentials from environment (via EnvLoader abstraction)
+     * */
     static final String senderEmail = get("SENDER_EMAIL");
     static final String senderPassword = get("SENDER_PASSWORD");
 
-    // 1. Directory where email templates are stored (relative to classpath)
+    // Directory for templates – currently unused but can be used to specify path prefix
     private static final String TEMPLATE_DIR = "";
 
-
-
     /**
-     * Sends an email with HTML content and an embedded logo image using Content-ID (CID).
+     * Sends an HTML email with an embedded image using a specified template.
      *
-     * @param templateFileName the file name of the email HTML template
-     * @param toEmail recipient email address
-     * @param subject subject of the email
+     * @param templateFileName File name of the HTML template (e.g., "welcome.html")
+     * @param toEmail Recipient email address
+     * @param subject Subject line of the email
+     * @throws MessagingException if there's an error during email composition or sending
+     * @throws IOException if template file reading fails
      */
     public static void sendEmail(String templateFileName, String toEmail, String subject)
             throws MessagingException, IOException {
 
-        // 1. Load HTML content from template
+        // 1. Load the HTML email template content
         String htmlContent = loadTemplateContent(templateFileName);
 
-        // 2. Extract name from email and inject if placeholder exists
+        // 2. Personalize the email by replacing the placeholder with the user's name
         String extractedName = extractNameFromEmail(toEmail);
         if (htmlContent.contains("{{name}}")) {
             htmlContent = htmlContent.replace("{{name}}", extractedName);
         }
 
-        // 3. Define SMTP configuration properties
+        // 3. Define SMTP configuration properties for sending through Gmail
         Properties props = new Properties();
-        props.put("mail.smtp.auth", "true");              // Enable authentication
-        props.put("mail.smtp.starttls.enable", "true");   // Enable STARTTLS for encryption
-        props.put("mail.smtp.host", "smtp.gmail.com");    // SMTP server host
-        props.put("mail.smtp.port", "587");               // STARTTLS port (587)
+        props.put("mail.smtp.auth", "true");                 // SMTP authentication enabled
+        props.put("mail.smtp.starttls.enable", "true");      // Enable STARTTLS encryption
+        props.put("mail.smtp.host", "smtp.gmail.com");       // Gmail SMTP server
+        props.put("mail.smtp.port", "587");                  // Port for TLS connection
 
-
-        // 5. Create authenticated mail session
+        // 4. Create a mail session with authentication
         Session session = Session.getInstance(props, new Authenticator() {
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
@@ -62,37 +65,40 @@ public class ManualEmailSender {
             }
         });
 
-        // 6. Create the HTML body part
+        // 5. Create the HTML part of the email body
         MimeBodyPart htmlPart = new MimeBodyPart();
         htmlPart.setContent(htmlContent, "text/html; charset=UTF-8");
 
-        // 7. Create the embedded image part using CID
+        // 6. Create the image part (to be embedded inline using CID)
         MimeBodyPart imagePart = new MimeBodyPart();
-        DataSource fds = new FileDataSource("src/main/resources/images/tatua-logo.png");
+        DataSource fds = new FileDataSource("src/main/resources/images/tatua-logo.png"); // Path to image
         imagePart.setDataHandler(new DataHandler(fds));
-        imagePart.setHeader("Content-ID", "<tatuaLogo>"); // Must match the CID in HTML
-        imagePart.setDisposition(MimeBodyPart.INLINE);    // Inline image (not attachment)
+        imagePart.setHeader("Content-ID", "<tatuaLogo>"); // Must match src="cid:tatuaLogo" in HTML
+        imagePart.setDisposition(MimeBodyPart.INLINE);    // Prevents image from appearing as an attachment
 
-        // 8. Combine HTML and image into multipart
+        // 7. Combine both parts into a multipart message
         Multipart multipart = new MimeMultipart();
-        multipart.addBodyPart(htmlPart);
-        multipart.addBodyPart(imagePart);
+        multipart.addBodyPart(htmlPart);  // Add HTML body
+        multipart.addBodyPart(imagePart); // Add image as inline content
 
-        // 9. Compose the email message
+        // 8. Construct the final email message
         Message message = new MimeMessage(session);
         message.setFrom(new InternetAddress(senderEmail));
         message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail));
         message.setSubject(subject);
-        message.setContent(multipart);
+        message.setContent(multipart); // Set the multipart (HTML + image)
 
-        // 10. Send the email
+        // 9. Send the email using the SMTP Transport
         Transport.send(message);
         System.out.println("Email sent successfully to " + toEmail);
     }
 
     /**
-     * Extracts the portion of the email address before the '@' and capitalizes the first letter.
-     * For example: "john.doe@example.com" → "John.doe"
+     * Extracts and capitalizes the first part of the email before '@'.
+     * E.g., john.doe@example.com → John.doe
+     *
+     * @param email the recipient email address
+     * @return extracted name or "there" if invalid
      */
     private static String extractNameFromEmail(String email) {
         if (email == null || !email.contains("@")) return "there";
