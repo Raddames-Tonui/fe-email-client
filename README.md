@@ -1,6 +1,6 @@
 # 📬 Email Template Sending in Java
 
-This README outlines the **full concept** of sending dynamic HTML emails in Java using three distinct approaches. It includes a **Java project tree structure**, use cases, and comparisons between **manual HTML loading**, **Thymeleaf**, and **Freemarker**. This is a learning-friendly setup where each method is independently runnable.
+This README outlines the **core concept** of sending dynamic HTML emails in Java using a **manual approach**, with additional placeholders for exploring **Thymeleaf** and **Freemarker** as alternative methods. The structure reflects a modular setup allowing experimentation and future integration.
 
 ---
 
@@ -12,122 +12,126 @@ email-sender-java/
 ├── src/
 │   └── main/
 │       ├── java/
-│       │   └── com/
-│       │       └── emailsender/
-│       │           ├── manual/               
-│       │           │   ├── EnvLoader.java
-│       │           │   └── Main.java
-│       │           │   ├── ManualEmailSender.java
-│       │           │   └── TemplateLoader.java
-│       ├── resources/
-│           └── images/
-│               └── tatua-logo.png               
+│       │   └── emailsender/
+│       │       └── manual/               
+│       │           ├── EnvLoader.java
+│       │           ├── ManualEmailSender.java
+│       │           ├── Main.java
+│       │           └── TemplateLoader.java
+│       └── resources/
+│           ├── images/
+│           │   └── tatua-logo.png               
 │           └── templates/
 │               ├── welcome.html             
 │               ├── newsletter.html            
-│               └──trial-expiry.html         
+│               └── trial-expiry.html         
 ├── .env
-
 ```
 
 ---
 
 ## 🧠 Concept Summary
 
-Add to .env
+Add to `.env`:
+
 ```env
 SENDER_EMAIL=youremail@example.com
 SENDER_PASSWORD=yourpassword123
 ```
 
+---
+
 ### 1. Manual String Injection
 
 **How it works**:
 
-* Load HTML as a raw string.
-* Replace placeholders manually using `.replace("{{key}}", value)`.
+* Loads HTML template as raw string.
+* Replaces placeholders like `{{name}}` using `.replace()`.
+* Embeds inline images with Content-ID (CID).
 
 **Pros**:
 
-* Simple to implement.
+* Lightweight and easy to understand.
 
 **Cons**:
 
-* Tedious and error-prone for large templates.
-* No logic support (loops, conditionals).
+* No support for loops or conditionals.
+* Prone to manual errors with large templates.
 
 **Use case**:
 
-* Small static templates with 1-2 variables.
+* Simple onboarding emails, static marketing messages.
 
-**Entry point**: `ManualMain.java`
+**Entry point**: `Main.java`
 
 ---
 
-### 2. Thymeleaf
+### 2. Thymeleaf (Concept Available)
 
 **How it works**:
 
-* HTML with `${variable}` or `th:text` attributes.
-* Use `TemplateEngine` to render the page with variables.
+* Templates use `${variable}` syntax or `th:text` attributes.
+* Rendered using `TemplateEngine`.
 
 **Pros**:
 
-* Easy integration with Spring Boot.
-* Good for structured HTML and readability.
+* Intuitive and integrates seamlessly with Spring Boot.
+* Clean HTML templates with dynamic rendering.
 
 **Cons**:
 
-* Slightly heavier setup than manual.
-* Less flexible for deeply nested logic.
+* Requires more setup (TemplateEngine, Context).
 
 **Use case**:
 
-* Spring-based apps, marketing emails, dynamic user onboarding.
+* Spring-based applications, rich onboarding flows.
 
-**Entry point**: `ThymeleafMain.java`
+**Entry point**: *To be implemented: `ThymeleafMain.java`*
 
 ---
 
-### 3. Freemarker
+### 3. Freemarker (Concept Available)
 
 **How it works**:
 
-* Uses `.ftl` templates with `${variable}`, `#if`, `#list`, etc.
-* Loads and renders template via `Configuration` and `Template`.
+* Templates written in `.ftl` format using `${}`, `#if`, `#list`, etc.
+* Uses `Configuration` and `Template` classes to process variables.
 
 **Pros**:
 
-* Extremely flexible, supports logic, conditions, loops.
-* Better suited for complex templating needs.
+* Ideal for complex templating logic.
+* Built-in support for loops, conditions, macros.
 
 **Cons**:
 
-* Slightly more complex syntax.
+* Slightly steeper learning curve.
 
 **Use case**:
 
-* Invoices, receipts, complex conditional emails.
+* Receipts, invoices, and dynamic reports.
 
-**Entry point**: `FreemarkerMain.java`
-
----
-
-## ✨ Recommended Approach
-
-| Use Case                    | Recommended        |
-| --------------------------- | ------------------ |
-| Simple templates            | Manual (for speed) |
-| Spring Boot apps            | Thymeleaf          |
-| Complex, logic-heavy emails | Freemarker ✅       |
-
-If building a **scalable, reusable emailing service**, **Freemarker** is the most flexible and professional approach.
+**Entry point**: *To be implemented: `FreemarkerMain.java`*
 
 ---
 
+## ✨ Recommended Usage
 
+| Use Case                 | Recommended        |
+| ------------------------ | ------------------ |
+| Static templates         | Manual (for speed) |
+| Spring Boot applications | Thymeleaf          |
+| Logic-heavy emails       | Freemarker ✅       |
+
+For a **scalable, reusable emailing service**, **Freemarker** offers the most flexibility and structure.
+
+---
 
 ## 📚 Summary
 
-This setup allows learners and teams to explore three different strategies within a single Java project. It supports modularity, learning, and experimentation with real-world email use cases — from onboarding to trial expiry, to newsletters.
+This project offers a clean foundation for HTML email templating in Java. You can:
 
+* Send styled emails with embedded images
+* Swap templating engines easily
+* Grow the project toward more advanced use cases (e.g., batch senders, queue-based systems)
+
+Perfect for developers learning email automation or building custom notification systems.
