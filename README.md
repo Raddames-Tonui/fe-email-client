@@ -14,15 +14,18 @@ email-sender-java/
 │       ├── java/
 │       │   └── com/
 │       │       └── emailsender/
-│       │           ├── manual/                # Manual method using plain string
+│       │           ├── manual/               
+│       │           │   ├── EnvLoader.java
+│       │           │   └── Main.java
 │       │           │   ├── ManualEmailSender.java
-│       │           │   └── ManualMain.java
-│       │           │   ├── ThymeleafRenderer.java
-│       │           │   └── ThymeleafMain.java
-│           └── email-templates/
-│               ├── welcome.html               # For manual
-│               ├── newsletter.html            # For manual
-│               ├── trial-expiry.html          # For manual
+│       │           │   └── TemplateLoader.java
+│       ├── resources/
+│           └── images/
+│               └── tatua-logo.png               
+│           └── templates/
+│               ├── welcome.html             
+│               ├── newsletter.html            
+│               └──trial-expiry.html         
 ├── .env
 
 ```
